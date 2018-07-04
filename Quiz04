@@ -1,0 +1,121 @@
+#Quiz 4
+
+
+#Quiz 3 Functions
+def dot(vector01, vector02):
+  '''
+  Python finds the dot product of the two vectors by multiplying the first values in each vector (x1*x2), then it adds the product of the second values from each vector (y1*y2), then it adds the product of the third values from each vector (z1*z2). The sum of the three products (x1*x2 + y1*y2 + z1*z2 = dot product), gives the dot product of the two vectors. Considering, vector01=[x1,y1,z1] and vector02=[x2,y2,z2]
+  '''
+  #This checks to see if the vectors have the same dimensions:
+  if len(vector01) != len(vector02):
+    print("error")
+    return None
+  
+  #Line 15-21 tells Python how to find the dot product:
+  else:
+    answer = 0
+    #Here it is telling Python to take the values from vector01 and multiply them by the values of vector02, then it adds up the three products:
+    for x in range(len(vector02)):
+      answer += vector01[x] * vector02[x]
+     #Repeat until the code is satisfied with "return":
+    return answer
+
+
+def vecSubtract(vector01, vector02):
+  '''
+  Python finds the difference of the two vectors by subtracting the first value of each vector, then placing the answer to in order (left to right). Then it does the same for the second and third values, until the code is satisfied with a result vector of the difference of the two vectors. So, vector01=[x1,x2,x3] and vector02=[y1,y2,y3], therefore, answer=[x1-y1,x2-y2,x3-y3]
+  '''
+  #This checks to see if the vectors have the same dimensions:
+  if len(vector01) != len(vector02):
+    print("error")
+    return None
+  else:
+  #Line 34-40 Python solves for the difference of the vectors:
+    answer = []
+    for x in range(len(vector01)):
+      #Here Python takes each difference and places them in order with "append": 
+      dif = vector01[x] - vector02[x]  
+      answer.append(dif)
+      ##Repeats until the code is satisfied with "return":
+    return answer
+
+
+def scalarVecMulti(scalar, vector03):
+  '''
+  Python solves for the product of the scalar and vector by multiplying each value of the vector by the scalar value. As it multiplies each value of the vector by the scalar, the answers stay in order as they were originally placed in the vector. 
+  '''
+  #Line 48-54 tells python how to find the product:
+  answer = []
+  #Here it is stating to take the values from the vector and apply line 39:
+  for z in vector03:
+    #This is where python finds the product and puts the most recent answer at the end of the solution with "append":
+    answer.append(scalar*z)
+  #Repeat until the code is satisfied or the product is complete (by using "return"):
+  return answer
+
+
+def twoNorm(vector):
+  '''
+  twoNorm takes a vector as it's argument. It then computes the sum of  the squares of each element of the vector. It then returns the square root of this sum.
+  '''
+  # This variable will keep track of the validity of our input.
+  inputStatus = True  
+  # This for loop will check each element of the vector to see if it's a number. 
+  for i in range(len(vector)):  
+    if ((type(vector[i]) != int) and (type(vector[i]) != float) and (type(vector[i]) != complex)):
+      inputStatus = False
+      print("Invalid Input")
+  # If the input is valid the function continues to compute the 2-norm
+  if inputStatus == True:
+    result = 0
+  # This for loop will compute the sum of the squares of the elements of the vector. 
+    for i in range(len(vector)):
+      result = result + (vector[i]**2)
+    result = result**(1/2)
+    return result
+
+
+def normalize(vector):
+  '''
+  Python computes the normalize vector by first asking if the twoNorm=0. If so, the code stops and prints the twoNorm. If not, it proceeds to compute the code. Python divides 1 by the twoNorm from the previous function, then multiples that by the original vector that was set equal to the result of the code. 
+  '''
+  #Here it is stating that the result of the normalize is a vector:
+  result = vector
+  norm = twoNorm(vector)
+  #Here it is stating that if the norm equals zero then set the result equal to the original vector:
+  if norm == 0:
+    return result
+  #This else if statment is saying that if the norm does not equal zero, then proceed with the rest of the code:
+  elif norm != 0:
+    for i in range(len(vector)):
+      #This is where the normalization is being executed:
+      result[i] = (1/norm) * result[i]
+    return result
+
+
+#Gram-Schmidt Function
+'''
+Python takes the Gram-Schmidt function and uses it to compute the QR factorization of matrix A. All functions from Quiz 3 are used to compute this function. 
+'''
+def GS(A):
+  #Here is where the dimensions are formed:
+  m = len(A[0])
+  n = len(A)
+  V = A
+  #Below is where Python introduces Q and R:
+  R = [[0] * n for i in range(n)]
+  Q = [[0] * m for i in range(n)]
+  for i in range(n):
+    #Line 110-115 connects the functions from Quiz 3:
+    R[i][i] = twoNorm(V[i])
+    Q[i] = normalize(V[i])
+    for j in range(i+1, n):
+      R[j][i] = dot(Q[i], V[j])
+      temp = scalarVecMulti(R[j][i], Q[i])
+      V[j] = vecSubtract(V[j], temp)
+  return [Q,R]
+
+
+A = [[1,1,1],[2,2,2],[3,3,3]]
+
+print(GS(A))
